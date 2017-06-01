@@ -1,0 +1,285 @@
+name: "CaffeNet"
+layers {
+  name: "data"
+  type: DATA
+  top: "data"
+  top: "label"
+  data_param {
+    source: "link_to_data/tr43k_te11k_16to66/tr_lmdb/morph_43k_ot_52_tr_lmdb"
+    backend: LMDB
+    batch_size: 50
+  }
+  transform_param {
+    crop_size: 227
+    mean_file: "link_to_data/tr43k_te11k_16to66/mean.binaryproto"
+    mirror: true
+  }
+  include: { phase: TRAIN }
+}
+layers {
+  name: "data"
+  type: DATA
+  top: "data"
+  top: "label"
+  data_param {
+    source:  "link_to_data/tr43k_te11k_16to66/te_lmdb/morph_11k_ot_52_te_lmdb"
+    backend: LMDB
+    batch_size: 50
+  }
+  transform_param {
+    crop_size: 227
+    mean_file: "link_to_data/tr43k_te11k_16to66/mean.binaryproto"
+    mirror: false
+  }
+  include: { phase: TEST }
+}
+layers {
+  name: "C1"
+  type: CONVOLUTION
+  bottom: "data"
+  top: "C1"
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  convolution_param {
+    num_output: 96
+    kernel_size: 7
+    stride: 4
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layers {
+  name: "relu1"
+  type: RELU
+  bottom: "C1"
+  top: "C1"
+}
+layers {
+  name: "S2"
+  type: POOLING
+  bottom: "C1"
+  top: "S2"
+  pooling_param {
+    pool: MAX
+    kernel_size: 3
+    stride: 2
+  }
+}
+layers {
+  name: "norm2"
+  type: LRN
+  bottom: "S2"
+  top: "norm2"
+  lrn_param {
+    local_size: 5
+    alpha: 0.0001
+    beta: 0.75
+  }
+}
+layers {
+  name: "C3"
+  type: CONVOLUTION
+  bottom: "norm2"
+  top: "C3"
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  convolution_param {
+    num_output: 256
+    pad: 2
+    kernel_size: 5
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 1
+    }
+  }
+}
+layers {
+  name: "relu3"
+  type: RELU
+  bottom: "C3"
+  top: "C3"
+}
+layers {
+  name: "S4"
+  type: POOLING
+  bottom: "C3"
+  top: "S4"
+  pooling_param {
+    pool: MAX
+    kernel_size: 3
+    stride: 2
+  }
+}
+layers {
+  name: "norm4"
+  type: LRN
+  bottom: "S4"
+  top: "norm4"
+  lrn_param {
+    local_size: 5
+    alpha: 0.0001
+    beta: 0.75
+  }
+}
+layers {
+  name: "C5"
+  type: CONVOLUTION
+  bottom: "norm4"
+  top: "C5"
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  convolution_param {
+    num_output: 384
+    pad: 1
+    kernel_size: 3
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layers{
+  name: "relu5" 
+  type: RELU
+  bottom: "C5"
+  top: "C5"
+}
+layers {
+  name: "S6"
+  type: POOLING
+  bottom: "C5"
+  top: "S6"
+  pooling_param {
+    pool: MAX
+    kernel_size: 3
+    stride: 2
+  }
+}
+layers {
+  name: "F7"
+  type: INNER_PRODUCT
+  bottom: "S6"
+  top: "F7"
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  inner_product_param {
+    num_output: 512
+    weight_filler {
+      type: "gaussian"
+      std: 0.005
+    }
+    bias_filler {
+      type: "constant"
+      value: 1
+    }
+  }
+}
+layers {
+  name: "relu7"
+  type: RELU
+  bottom: "F7"
+  top: "F7"
+}
+layers {
+  name: "drop7"
+  type: DROPOUT
+  bottom: "F7"
+  top: "F7"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layers {
+  name: "F8"
+  type: INNER_PRODUCT
+  bottom: "F7"
+  top: "F8"
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  inner_product_param {
+    num_output: 512
+    weight_filler {
+      type: "gaussian"
+      std: 0.005
+    }
+    bias_filler {
+      type: "constant"
+      value: 1
+    }
+  }
+}
+layers {
+  name: "relu8"
+  type: RELU
+  bottom: "F8"
+  top: "F8"
+}
+layers {
+  name: "drop8"
+  type: DROPOUT
+  bottom: "F8"
+  top: "F8"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layers {
+  name: "F9bi"
+  type: INNER_PRODUCT
+  bottom: "F8"
+  top: "F9bi"
+  blobs_lr: 10
+  blobs_lr: 20
+  weight_decay: 1
+  weight_decay: 0
+  inner_product_param {
+    num_output: 2
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layers {
+  name: "accuracy"
+  type: ACCURACY
+  bottom: "F9bi"
+  bottom: "label"
+  top: "accuracy"
+  include: { phase: TEST }
+}
+layers {
+  name: "loss"
+  type: SOFTMAX_LOSS
+  bottom: "F9bi"
+  bottom: "label"
+  top: "loss"
+}

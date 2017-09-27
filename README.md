@@ -19,3 +19,5 @@ booktitle = {The IEEE Conference on Computer Vision and Pattern Recognition (CVP
 month = {July},
 year = {2017}
 }</code></pre>
+
+[[PDF](http://openaccess.thecvf.com/content_cvpr_2017/papers/Chen_Using_Ranking-CNN_for_CVPR_2017_paper.pdf)] 

@@ -2,7 +2,7 @@
 
 # Description
 
-The Ranking-CNN model for age estimation on MORPH dataset. Caffe and its prerequisites are required for the program as introduced in http://caffe.berkeleyvision.org/. MORPH dataset is publicly available but request is needed to access as described in http://www.faceaginggroup.com/morph/.
+The ranking-CNN model for age estimation on MORPH dataset. Caffe and its prerequisites are required for the program as introduced in http://caffe.berkeleyvision.org/. MORPH dataset is publicly available but request is needed to access as described in http://www.faceaginggroup.com/morph/.
 
 The code contains the definition of 50 basic networks fine-tuned from the base network trained on Adience dataset according to http://www.openu.ac.il/home/hassner/projects/cnn_agegender/.
 
